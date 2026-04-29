@@ -2,10 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SalaoDeBelezaLeila.Domain\SalaoDeBelezaLeila.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\SalaoDeBelezaLeila.Application\SalaoDeBelezaLeila.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

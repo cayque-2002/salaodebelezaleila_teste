@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using SalaoDeBelezaLeila.Domain.Entities;
 
+namespace SalaoDeBelezaLeila.Infra.Data;
+
 public class AppDbContext : DbContext
 {
     public DbSet<Cliente> Clientes { get; set; }

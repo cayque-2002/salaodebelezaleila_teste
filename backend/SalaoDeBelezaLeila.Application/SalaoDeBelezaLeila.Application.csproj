@@ -4,11 +4,6 @@
     <ProjectReference Include="..\SalaoDeBelezaLeila.Domain\SalaoDeBelezaLeila.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
