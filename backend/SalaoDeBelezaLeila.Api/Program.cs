@@ -17,6 +17,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // DI
 builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IServicoService, ServicoService>();
+builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
 
 var app = builder.Build();
 

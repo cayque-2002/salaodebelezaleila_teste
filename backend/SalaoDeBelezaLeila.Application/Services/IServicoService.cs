@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +7,12 @@ using SalaoDeBelezaLeila.Application.Dtos;
 
 namespace SalaoDeBelezaLeila.Application.Services;
 
-public interface IClienteService
+public interface IServicoService
 {
-    Task<List<ClienteDto>> GetAll();
-    Task<ClienteDto?> GetById(int id);
-    Task<ClienteDto> Create(ClienteDto dto);
-    Task<bool> Update(int id, ClienteDto dto);
+    Task<List<ServicoDto>> GetAll();
+    Task<ServicoDto?> GetById(int id);
+    Task<ServicoDto> Create(ServicoDto dto);
+    Task<bool> Update(int id, ServicoDto dto);
     Task<bool> Delete(int id);
 }
 
