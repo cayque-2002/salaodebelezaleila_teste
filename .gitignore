@@ -8,3 +8,5 @@ obj/
 # Node (quando fizer o front)
 node_modules/
 dist/
+
+*.db
