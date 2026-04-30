@@ -14,4 +14,5 @@ public class AgendamentoDto
     public int ServicoId { get; set; }
     public string Servico { get; set; } = string.Empty;
     public DateTime DataHora { get; set; }
+    public int UsuarioId { get; set; }
 }

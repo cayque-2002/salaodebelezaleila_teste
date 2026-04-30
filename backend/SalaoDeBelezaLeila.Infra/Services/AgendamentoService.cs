@@ -2,6 +2,7 @@
 using SalaoDeBelezaLeila.Application.Dtos;
 using SalaoDeBelezaLeila.Application.Services;
 using SalaoDeBelezaLeila.Domain.Entities;
+using SalaoDeBelezaLeila.Domain.Enums;
 using SalaoDeBelezaLeila.Infra.Data;
 
 public class AgendamentoService : IAgendamentoService
@@ -123,6 +124,16 @@ public class AgendamentoService : IAgendamentoService
 
         if (dto.DataHora < DateTime.Now)
             throw new Exception("Não é possível agendar no passado");
+
+        var usuario = await _context.Usuarios.FindAsync(dto.UsuarioId);
+        if (usuario == null) throw new Exception("Usuário não encontrado");
+
+        if (dto.DataHora < DateTime.Now.AddDays(2)
+            && usuario.Tipo != TipoUsuario.Admin)
+        {
+            throw new Exception("Somente administradores podem alterar agendamentos com menos de 2 dias." +
+                                " Por favor nos contate por telefone.");
+        }
 
         var entity = await _context.Agendamentos.FindAsync(id);
 
