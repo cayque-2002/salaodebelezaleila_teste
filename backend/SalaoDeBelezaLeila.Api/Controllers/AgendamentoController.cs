@@ -64,4 +64,16 @@ public class AgendamentoController : ControllerBase
         if (!deleted) return NotFound();
         return NoContent();
     }
+
+    [HttpPatch("{id}/confirmar")]
+    public async Task<IActionResult> Confirmar(int id, [FromQuery] int usuarioId)
+    {
+        var result = await _service.ConfirmarAgendamento(id, usuarioId);
+
+        if (!result)
+            return NotFound();
+
+        return NoContent();
+    }
+
 }

@@ -16,5 +16,6 @@ public interface IAgendamentoService
     Task<AgendamentoDto> Create(AgendamentoDto dto);
     Task<bool> Update(int id, AgendamentoDto dto);
     Task<bool> Delete(int id);
+    Task<bool> ConfirmarAgendamento(int id, int usuarioId);
 }
 

@@ -171,6 +171,28 @@ public class AgendamentoService : IAgendamentoService
         return true;
     }
 
+    public async Task<bool> ConfirmarAgendamento(int id, int usuarioId)
+    {
+        var agendamento = await _context.Agendamentos.FindAsync(id);
+        if (agendamento == null)
+            return false;
+
+        var usuario = await _context.Usuarios.FindAsync(usuarioId);
+        if (usuario == null)
+            throw new Exception("Usuário não encontrado");
+
+        if (usuario.Tipo != TipoUsuario.Admin)
+            throw new Exception("Apenas administradores podem confirmar agendamentos");
+
+        if (agendamento.Status == StatusAgendamento.Confirmado)
+            throw new Exception("Agendamento já está confirmado");
+
+        agendamento.Status = StatusAgendamento.Confirmado;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task ValidaAgendamento(AgendamentoDto dto)
     {
         if (dto.DataHora < DateTime.Now)
