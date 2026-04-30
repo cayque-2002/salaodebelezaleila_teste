@@ -24,9 +24,13 @@ public class AgendamentoService : IAgendamentoService
             .Select(a => new AgendamentoDto
             {
                 Id = a.Id,
+                ClienteId = a.ClienteId,
                 Cliente = a.Cliente.Nome,
                 Servicos = a.Servicos
                     .Select(s => s.Servico.Nome)
+                    .ToList(),
+                ServicosIds = a.Servicos
+                    .Select(s => s.ServicoId)
                     .ToList(),
                 DataHora = a.DataHora,
                 Status = a.Status
@@ -43,9 +47,13 @@ public class AgendamentoService : IAgendamentoService
             .Select(a => new AgendamentoDto
             {
                 Id = a.Id,
+                ClienteId = a.ClienteId,
                 Cliente = a.Cliente.Nome,
                 Servicos = a.Servicos
                     .Select(s => s.Servico.Nome)
+                    .ToList(),
+                ServicosIds = a.Servicos
+                    .Select(s => s.ServicoId)
                     .ToList(),
                 DataHora = a.DataHora,
                 Status = a.Status
@@ -64,9 +72,13 @@ public class AgendamentoService : IAgendamentoService
             .Select(a => new AgendamentoDto
             {
                 Id = a.Id,
+                ClienteId = a.ClienteId,
                 Cliente = a.Cliente.Nome,
                 Servicos = a.Servicos
                     .Select(s => s.Servico.Nome)
+                    .ToList(),
+                ServicosIds = a.Servicos
+                    .Select(s => s.ServicoId)
                     .ToList(),
                 DataHora = a.DataHora,
                 Status = a.Status
@@ -88,9 +100,13 @@ public class AgendamentoService : IAgendamentoService
             .Select(a => new AgendamentoDto
             {
                 Id = a.Id,
+                ClienteId = a.ClienteId,
                 Cliente = a.Cliente.Nome,
                 Servicos = a.Servicos
                     .Select(s => s.Servico.Nome)
+                    .ToList(),
+                ServicosIds = a.Servicos
+                    .Select(s => s.ServicoId)
                     .ToList(),
                 DataHora = a.DataHora,
                 Status = a.Status
@@ -119,6 +135,7 @@ public class AgendamentoService : IAgendamentoService
             {
                 ServicoId = id
             }).ToList()
+            
         };
 
         _context.Agendamentos.Add(entity);

@@ -14,5 +14,6 @@ public interface IUsuarioService
     Task<UsuarioCreateDto> Create(UsuarioCreateDto dto);
     Task<bool> Update(int id, UsuarioCreateDto dto);
     Task<bool> Delete(int id);
+    Task<UsuarioResponseDto?> Login(LoginDto dto);
 }
 

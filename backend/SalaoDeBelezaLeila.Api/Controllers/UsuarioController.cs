@@ -48,4 +48,12 @@ public class UsuarioController : ControllerBase
         if (!deleted) return NotFound();
         return NoContent();
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        var usuario = await _service.Login(dto);
+        return Ok(usuario);
+    }
+
 }

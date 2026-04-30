@@ -93,6 +93,27 @@ public class UsuarioService : IUsuarioService
         return true;
     }
 
+
+    public async Task<UsuarioResponseDto> Login(LoginDto dto)
+    {
+        var usuario = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+        if (usuario == null)
+            throw new Exception("Usuário ou senha inválidos");
+
+        if (!PasswordHelper.Verify(dto.Senha, usuario.SenhaHash))
+            throw new Exception("Usuário ou senha inválidos");
+
+        return new UsuarioResponseDto
+        {
+            Id = usuario.Id,
+            Nome = usuario.Nome,
+            Email = usuario.Email,
+            Tipo = usuario.Tipo
+        };
+    }
+
     public async Task<bool> ValidaUsuario(UsuarioCreateDto dto)
     {
         var entity = await _context.Usuarios.Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
