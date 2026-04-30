@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalaoDeBelezaLeila.Application.Dtos;
+using SalaoDeBelezaLeila.Application.Helpers;
 using SalaoDeBelezaLeila.Application.Services;
 using SalaoDeBelezaLeila.Domain.Entities;
 using SalaoDeBelezaLeila.Infra.Data;
-using SalaoDeBelezaLeila.Application.Helpers;
+using System.Text.RegularExpressions;
 
 public class UsuarioService : IUsuarioService
 {
@@ -43,8 +44,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task<UsuarioCreateDto> Create(UsuarioCreateDto dto)
     {
-        if (_context.Usuarios.Any(u => u.Email == dto.Email))
-            throw new Exception("Email já cadastrado");
+        await ValidaUsuario(dto);
 
         var entity = new Usuario
         {
@@ -67,10 +67,7 @@ public class UsuarioService : IUsuarioService
 
         if (entity == null) throw new Exception("Usuário não encontrado");
 
-        if (_context.Usuarios.Any(u => u.Email == dto.Email))
-            throw new Exception("Email já cadastrado");
-
-        //if (entity == null) return false;
+        await ValidaUsuario(dto);
 
         entity.Nome = dto.Nome;
         entity.Email = dto.Email;
@@ -90,11 +87,33 @@ public class UsuarioService : IUsuarioService
 
         if (entity == null) throw new Exception("Usuário não encontrado");
 
-        //if (entity == null) return false;
-
         _context.Usuarios.Remove(entity);
         await _context.SaveChangesAsync();
 
         return true;
     }
+
+    public async Task<bool> ValidaUsuario(UsuarioCreateDto dto)
+    {
+        var entity = await _context.Usuarios.Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
+
+      //Validações Nome
+        if (dto.Nome == null || dto.Nome == string.Empty)
+            throw new Exception("Nome é obrigatório");
+
+      //Validações Email
+        if (dto.Email == null || dto.Email == string.Empty)
+            throw new Exception("Email é obrigatório");
+
+        if (!Regex.IsMatch(dto.Email, @"^[^\s@]+@[^\s@]+\.[^\s@]+$"))
+        {
+            throw new Exception("Email inválido");
+        }
+
+        if (entity.Email != dto.Email)
+            throw new Exception("Email já cadastrado");
+
+        return true;
+    }
+
 }

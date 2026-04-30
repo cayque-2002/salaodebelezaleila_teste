@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Servico> Servicos { get; set; }
     public DbSet<Agendamento> Agendamentos { get; set; }    
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<AgendamentoServico> AgendamentoServicos { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
