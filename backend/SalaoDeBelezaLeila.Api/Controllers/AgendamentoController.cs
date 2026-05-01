@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SalaoDeBelezaLeila.Application.Dtos;
 using SalaoDeBelezaLeila.Application.Services;
 using SalaoDeBelezaLeila.Domain.Entities;
@@ -75,5 +76,15 @@ public class AgendamentoController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("dashboard/semanal")]
+    public async Task<IActionResult> ObterDashboardSemanal(
+    [FromQuery] int semana,
+    [FromQuery] int ano)
+    {
+        var resultado = await _service.ObterDashboardSemanal(semana, ano);
+        return Ok(resultado);
+    }
+
 
 }

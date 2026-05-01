@@ -17,5 +17,6 @@ public interface IAgendamentoService
     Task<bool> Update(int id, AgendamentoDto dto);
     Task<bool> Delete(int id);
     Task<bool> ConfirmarAgendamento(int id, int usuarioId);
+    Task<DashboardSemanalDto> ObterDashboardSemanal(int semana, int ano);
 }
 

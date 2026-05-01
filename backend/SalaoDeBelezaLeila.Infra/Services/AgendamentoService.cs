@@ -236,4 +236,67 @@ public class AgendamentoService : IAgendamentoService
             throw new Exception("Um ou mais serviços são inválidos");
     }
 
+    public async Task<DashboardSemanalDto> ObterDashboardSemanal(int semana, int ano)
+    {
+        var (inicio, fim) = ObterIntervaloSemana(ano, semana);
+
+        var agendamentos = await _context.Agendamentos
+            .Include(x => x.Servicos)
+                .ThenInclude(x => x.Servico)
+            .Where(x => x.DataHora >= inicio && x.DataHora <= fim)
+            .ToListAsync();
+
+        var totalAtendimentos = agendamentos.Count;
+
+        var faturamentoTotal = agendamentos
+            .SelectMany(a => a.Servicos)
+            .Sum(s => s.Servico.Preco);
+
+        var servicosMaisFeitos = agendamentos
+            .SelectMany(a => a.Servicos)
+            .GroupBy(s => s.Servico.Nome)
+            .Select(g => new ServicoDashboardDto
+            {
+                Nome = g.Key,
+                Quantidade = g.Count()
+            })
+            .OrderByDescending(x => x.Quantidade)
+            .Take(5)
+            .ToList();
+
+        var faturamentoPorDia = agendamentos
+            .GroupBy(a => a.DataHora.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => new FaturamentoDiaDto
+            {
+                Dia = g.Key.ToString("ddd"),
+                Valor = g.SelectMany(a => a.Servicos)
+                         .Sum(s => s.Servico.Preco)
+            })
+            .ToList();
+
+        return new DashboardSemanalDto
+        {
+            TotalAtendimentos = totalAtendimentos,
+            FaturamentoTotal = faturamentoTotal,
+            ServicosMaisFeitos = servicosMaisFeitos,
+            FaturamentoPorDia = faturamentoPorDia
+        };
+    }
+
+    private (DateTime inicio, DateTime fim) ObterIntervaloSemana(int ano, int semana)
+    {
+        var primeiroDiaAno = new DateTime(ano, 1, 1);
+
+        var diferenca = DayOfWeek.Monday - primeiroDiaAno.DayOfWeek;
+        var primeiraSegunda = primeiroDiaAno.AddDays(diferenca);
+
+        var inicio = primeiraSegunda.AddDays((semana - 1) * 7);
+        var fim = inicio.AddDays(6);
+
+        return (inicio, fim);
+    }
+
+
+
 }
