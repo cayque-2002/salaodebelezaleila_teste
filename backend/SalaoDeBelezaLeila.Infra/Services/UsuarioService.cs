@@ -67,6 +67,9 @@ public class UsuarioService : IUsuarioService
 
         if (entity == null) throw new Exception("Usuário não encontrado");
 
+        if (entity.Email == dto.Email)
+            throw new Exception("Email já cadastrado");
+
         await ValidaUsuario(dto);
 
         entity.Nome = dto.Nome;
@@ -116,7 +119,6 @@ public class UsuarioService : IUsuarioService
 
     public async Task<bool> ValidaUsuario(UsuarioCreateDto dto)
     {
-        var entity = await _context.Usuarios.Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
 
       //Validações Nome
         if (dto.Nome == null || dto.Nome == string.Empty)
@@ -130,9 +132,6 @@ public class UsuarioService : IUsuarioService
         {
             throw new Exception("Email inválido");
         }
-
-        if (entity.Email != dto.Email)
-            throw new Exception("Email já cadastrado");
 
         return true;
     }

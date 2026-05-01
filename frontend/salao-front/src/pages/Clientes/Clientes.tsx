@@ -6,15 +6,19 @@ import {
   atualizarCliente,
 } from "../../services/clienteService";
 
+import { Pencil, Trash, Plus } from "lucide-react";
+
 import "./Clientes.css";
 import MainLayout from "../../layouts/mainLayout/MainLayout";
 
 export default function Clientes() {
   const [clientes, setClientes] = useState<any[]>([]);
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [editOpen, setEditOpen] = useState(false);
-  const [clienteEdit, setClienteEdit] = useState<any>(null);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [cliente, setCliente] = useState<any>({
+    nome: "",
+    telefone: "",
+  });
 
   useEffect(() => {
     load();
@@ -25,106 +29,122 @@ export default function Clientes() {
     setClientes(data);
   };
 
-  const salvar = async () => {
-    await criarCliente({ nome, telefone });
+  // 🔥 ABRIR CRIAÇÃO
+  const abrirCriar = () => {
+    setCliente({ nome: "", telefone: "" });
+    setModalOpen(true);
+  };
 
-    setNome("");
-    setTelefone("");
+  // 🔥 ABRIR EDIÇÃO
+  const abrirEditar = (c: any) => {
+    setCliente(c);
+    setModalOpen(true);
+  };
+
+  // 💾 SALVAR (CREATE OU UPDATE)
+  const salvar = async () => {
+    if (cliente.id) {
+      await atualizarCliente(cliente.id, cliente);
+    } else {
+      await criarCliente(cliente);
+    }
+
+    setModalOpen(false);
+    setCliente({ nome: "", telefone: "" });
 
     load();
   };
 
+  // 🗑 DELETE
   const remover = async (id: number) => {
     await deletarCliente(id);
-    load();
-  };
-
-  const abrirEdicao = (cliente: any) => {
-  setClienteEdit(cliente);
-  setEditOpen(true);
-  };
-
-  const salvarEdicao = async () => {
-    await atualizarCliente(clienteEdit.id, {
-      nome: clienteEdit.nome,
-      telefone: clienteEdit.telefone,
-    });
-
-    setEditOpen(false);
-    setClienteEdit(null);
-
     load();
   };
 
   return (
     <MainLayout>
       <div className="container">
-        <h1>Clientes</h1>
+        <div className="page-header">
+          <h1>Clientes</h1>
 
-        {/* FORM */}
-        <div style={{ marginBottom: 20 }}>
-          <input
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-          />
-
-          <input
-            placeholder="Telefone"
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-          />
-
-          <button onClick={salvar}>Criar</button>
+          <button className="btn-primary new-client-btn" onClick={abrirCriar}>
+            <Plus size={18} />
+            Novo Cliente
+          </button>
         </div>
 
-        {/* LISTA */}
-        <table border={1} cellPadding={10}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {clientes.map((c) => (
-              <tr key={c.id}>
-                <td>{c.nome}</td>
-                <td>{c.telefone}</td>
-                <td>
-                  <button onClick={() => abrirEdicao(c)}>Editar</button>
-                  <button onClick={() => remover(c.id)}>Excluir</button>
-                </td>
+        {/* TABELA */}
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {editOpen && (
+            </thead>
+
+            <tbody>
+              {clientes.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.nome}</td>
+                  <td>{c.telefone}</td>
+
+                  <td>
+                    <div className="actions">
+                      <button
+                        className="edit"
+                        onClick={() => abrirEditar(c)}
+                      >
+                        <Pencil size={16} />
+                      </button>
+
+                      <button
+                        className="delete"
+                        onClick={() => remover(c.id)}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>  
+
+        {/* MODAL ÚNICO */}
+        {modalOpen && (
           <div className="modal-backdrop">
             <div className="modal">
-              <h2>Editar Cliente</h2>
+              <h2>
+                {cliente.id ? "Editar Cliente" : "Novo Cliente"}
+              </h2>
 
               <input
-                value={clienteEdit?.nome || ""}
-                onChange={(e) =>
-                  setClienteEdit({ ...clienteEdit, nome: e.target.value })
-                }
                 placeholder="Nome"
+                value={cliente.nome}
+                onChange={(e) =>
+                  setCliente({ ...cliente, nome: e.target.value })
+                }
               />
 
               <input
-                value={clienteEdit?.telefone || ""}
-                onChange={(e) =>
-                  setClienteEdit({ ...clienteEdit, telefone: e.target.value })
-                }
                 placeholder="Telefone"
+                value={cliente.telefone}
+                onChange={(e) =>
+                  setCliente({ ...cliente, telefone: e.target.value })
+                }
               />
 
               <div className="modal-actions">
-                <button onClick={() => setEditOpen(false)}>Cancelar</button>
-                <button onClick={salvarEdicao}>Salvar</button>
+                <button onClick={() => setModalOpen(false)}>
+                  Cancelar
+                </button>
+
+                <button onClick={salvar} className="save">
+                  Salvar
+                </button>
               </div>
             </div>
           </div>

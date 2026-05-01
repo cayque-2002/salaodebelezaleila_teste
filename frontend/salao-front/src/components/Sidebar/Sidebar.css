@@ -15,6 +15,18 @@
 }
 
 .sidebar li {
-  padding: 10px 0;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar li:hover {
+  background: #1f2937;
+  transform: translateX(4px);
+}
+
+.sidebar li.active {
+  background: #2563eb;
 }

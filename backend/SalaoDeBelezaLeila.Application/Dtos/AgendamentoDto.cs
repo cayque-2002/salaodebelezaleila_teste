@@ -14,6 +14,7 @@ public class AgendamentoDto
     public string Cliente { get; set; } = string.Empty;
     public List<int> ServicosIds { get; set; } = new();
     public List<string> Servicos { get; set; } = new();
+    public decimal Total { get; set; }
     public DateTime DataHora { get; set; }
     public int UsuarioId { get; set; }
     public StatusAgendamento Status { get; set; }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "../../services/login";
-import { setUser } from "../../services/userStorage"
-import { useNavigate } from "react-router-dom"; // (vamos usar já já)
+import { setUser } from "../../services/userStorage";
+import { useNavigate } from "react-router-dom";
 
 import "./Login.css";
 
@@ -12,17 +12,27 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-  const user = await login(email, password);
+    try {
+      const user = await login(email, password);
 
-  setUser(user);
+      setUser(user);
 
-  navigate("/dashboard");
-  
-};
+      // 👇 redirecionamento por tipo de usuário
+      if (user.tipo === 1) {
+        navigate("/dashboard"); // Admin
+        return;
+      }
+
+      navigate("/agendamentos"); // Cliente / comum
+    } catch (error) {
+      alert("Usuário ou senha inválidos");
+    }
+  };
 
   return (
     <div className="login-container">
       <div className="login-box">
+
         <h1>Salão Leila</h1>
         <p>Faça login para continuar</p>
 
@@ -43,6 +53,7 @@ export default function Login() {
         <button onClick={handleLogin}>
           Entrar
         </button>
+
       </div>
     </div>
   );

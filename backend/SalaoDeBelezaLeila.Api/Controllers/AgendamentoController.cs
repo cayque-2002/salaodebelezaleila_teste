@@ -43,6 +43,14 @@ public class AgendamentoController : ControllerBase
         return Ok(agendamento);
     }
 
+    [HttpGet("meus")]
+    public async Task<IActionResult> ObterMeusAgendamentos([FromQuery] int usuarioId)
+    {
+        var result = await _service.ObterPorUsuarioCliente(usuarioId);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AgendamentoDto dto)
     {

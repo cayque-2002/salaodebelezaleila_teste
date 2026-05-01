@@ -12,8 +12,10 @@ public interface IClienteService
 {
     Task<List<ClienteDto>> GetAll();
     Task<ClienteDto?> GetById(int id);
+    Task<ClienteDto?> ObterPorUsuarioId(int usuarioId);
     Task<ClienteDto> Create(ClienteDto dto);
     Task<bool> Update(int id, ClienteDto dto);
     Task<bool> Delete(int id);
+
 }
 

@@ -9,10 +9,12 @@ using System.Text.RegularExpressions;
 public class AgendamentoService : IAgendamentoService
 {
     private readonly AppDbContext _context;
+    private readonly IClienteService _clienteService;
 
-    public AgendamentoService(AppDbContext context)
+    public AgendamentoService(AppDbContext context, IClienteService clienteService)
     {
         _context = context;
+        _clienteService = clienteService;
     }
 
     public async Task<List<AgendamentoDto>> GetAll()
@@ -32,6 +34,7 @@ public class AgendamentoService : IAgendamentoService
                 ServicosIds = a.Servicos
                     .Select(s => s.ServicoId)
                     .ToList(),
+                Total = a.Servicos.Sum(s => s.Servico.Preco),
                 DataHora = a.DataHora,
                 Status = a.Status
             }).ToListAsync();
@@ -55,6 +58,7 @@ public class AgendamentoService : IAgendamentoService
                 ServicosIds = a.Servicos
                     .Select(s => s.ServicoId)
                     .ToList(),
+                Total = a.Servicos.Sum(s => s.Servico.Preco),
                 DataHora = a.DataHora,
                 Status = a.Status
             })
@@ -80,6 +84,7 @@ public class AgendamentoService : IAgendamentoService
                 ServicosIds = a.Servicos
                     .Select(s => s.ServicoId)
                     .ToList(),
+                Total = a.Servicos.Sum(s => s.Servico.Preco),
                 DataHora = a.DataHora,
                 Status = a.Status
             })
@@ -93,6 +98,7 @@ public class AgendamentoService : IAgendamentoService
 
     public async Task<List<AgendamentoDto?>> GetByClienteId(int id)
     {
+
         var a = await _context.Agendamentos
             .Include(a => a.Cliente)
             .Include(a => a.Servicos)
@@ -108,6 +114,7 @@ public class AgendamentoService : IAgendamentoService
                 ServicosIds = a.Servicos
                     .Select(s => s.ServicoId)
                     .ToList(),
+                Total = a.Servicos.Sum(s => s.Servico.Preco),
                 DataHora = a.DataHora,
                 Status = a.Status
             })
@@ -118,6 +125,33 @@ public class AgendamentoService : IAgendamentoService
         if (a == null) return null;
 
         return a;
+    }
+
+    public async Task<List<AgendamentoDto>> ObterPorUsuarioCliente(int usuarioId)
+    {
+        var cliente = await _clienteService.ObterPorUsuarioId(usuarioId);
+
+        if (cliente == null)
+            return new List<AgendamentoDto>();
+
+        return await _context.Agendamentos
+            .Include(a => a.Cliente)
+            .Include(a => a.Servicos)
+                .ThenInclude(s => s.Servico)
+            .Where(a => a.ClienteId == cliente.Id)
+            .Select(a => new AgendamentoDto
+            {
+                Id = a.Id,
+                ClienteId = a.ClienteId,
+                Cliente = a.Cliente.Nome,
+                Servicos = a.Servicos.Select(s => s.Servico.Nome).ToList(),
+                ServicosIds = a.Servicos.Select(s => s.ServicoId).ToList(),
+                DataHora = a.DataHora,
+                Total = a.Servicos.Sum(s => s.Servico.Preco),
+                Status = a.Status,
+                UsuarioId = a.Cliente.UsuarioId ?? 0
+            })
+            .ToListAsync();
     }
 
     public async Task<AgendamentoDto> Create(AgendamentoDto dto)
